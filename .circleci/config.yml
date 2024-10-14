@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Execute Memory-Intensive Python Script
           command: |
-            python3 memory_alloc.py 60 5  # Adjust the parameters as needed
+            python3 memory_alloc.py 200 5  # Adjust the parameters as needed
         
       - run:
           name: Completion Message
