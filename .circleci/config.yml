@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Execute I/O Stress Test
           command: |
-            stress --io 4 --timeout 300
+            stress --io 40 --timeout 300
 
       - run:
           name: Completion Message
