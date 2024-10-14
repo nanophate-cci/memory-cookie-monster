@@ -3,42 +3,27 @@ version: 2.1
 jobs:
   memory_intensive_job:
     docker:
-      - image: cimg/base:current
-    resource_class: large
+      - image: cimg/python:3.9  # Choose a suitable Python Docker image
+    resource_class: large        # Ensure the job uses a large resource class
     steps:
-      - checkout
-
+      - checkout  # Clones your repository
+      
       - run:
-          name: Install Required Tools
+          name: Install Python Dependencies
           command: |
-            sudo apt-get update && sudo apt-get install -y python3-pip
-
+            pip install --upgrade pip
+        
       - run:
           name: Execute Memory-Intensive Python Script
           command: |
-            python3 -c "
-            import sys
-
-            def allocate_memory_gb(gb):
-                try:
-                    print(f'Allocating {gb} GB of memory...')
-                    memory = ' ' * (gb * 1024**3)  # Allocate memory
-                    print(f'{gb} GB allocated successfully.')
-                    input('Press Enter to release memory...')
-                except MemoryError:
-                    print('Memory allocation failed!')
-                    sys.exit(1)
-
-            # Attempt to allocate 200 GB of memory
-            allocate_memory_gb(200)
-            "
-
+            python3 memory_alloc.py 60 5  # Adjust the parameters as needed
+        
       - run:
           name: Completion Message
-          command: echo "Memory-intensive test completed."
+          command: echo "Memory-intensive test completed successfully."
 
 workflows:
   version: 2
-  test_memory_intensive_job:
+  memory_test_workflow:
     jobs:
       - memory_intensive_job
