@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+tasks.register('allocateMemory', JavaExec) {
+    group = 'Test'
+    description = 'Allocates specified memory and holds it for a duration.'
+    main = 'com.example.MemoryAllocator'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['60', '5'] // Adjust these values as needed
+    // Set JVM arguments to specify initial and maximum heap size
+    jvmArgs = ['-Xms60G', '-Xmx60G']
+}
