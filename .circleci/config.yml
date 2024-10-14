@@ -9,11 +9,29 @@ jobs:
       - checkout
 
       - run:
-          name: Install and Run Stress
+          name: Install Required Tools
           command: |
-            sudo apt-get update
-            sudo apt-get install -y stress
-            stress --vm 1 --vm-bytes 200G --vm-hang 300
+            sudo apt-get update && sudo apt-get install -y python3-pip
+
+      - run:
+          name: Execute Memory-Intensive Python Script
+          command: |
+            python3 -c "
+            import sys
+
+            def allocate_memory_gb(gb):
+                try:
+                    print(f'Allocating {gb} GB of memory...')
+                    memory = ' ' * (gb * 1024**3)  # Allocate memory
+                    print(f'{gb} GB allocated successfully.')
+                    input('Press Enter to release memory...')
+                except MemoryError:
+                    print('Memory allocation failed!')
+                    sys.exit(1)
+
+            # Attempt to allocate 200 GB of memory
+            allocate_memory_gb(200)
+            "
 
       - run:
           name: Completion Message
