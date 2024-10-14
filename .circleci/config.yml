@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   memory_intensive_job:
     docker:
-      - image: cimg/python:3.9  # Use an appropriate Python Docker image
+      - image: cimg/base:current
     resource_class: large
     steps:
       - checkout
@@ -13,24 +13,11 @@ jobs:
             sudo apt-get update && sudo apt-get install -y python3-pip
 
       - run:
-          name: Execute Memory-Intensive Python Script
+          name: Install and Run Stress
           command: |
-            python3 -c "
-              import sys
-              
-              def allocate_memory_gb(gb):
-                  try:
-                      print(f'Allocating {gb} GB of memory...')
-                      memory = ' ' * (gb * 1024**3)  # Allocate memory
-                      print(f'{gb} GB allocated successfully.')
-                      input('Press Enter to release memory...')
-                  except MemoryError:
-                      print('Memory allocation failed!')
-                      sys.exit(1)
-              
-              # Attempt to allocate 200 GB of memory
-              allocate_memory_gb(200)
-            "
+            sudo apt-get update
+            sudo apt-get install -y stress
+            stress --vm 1 --vm-bytes 200G --vm-hang 300
 
       - run:
           name: Completion Message
