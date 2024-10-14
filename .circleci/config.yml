@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Execute Memory-Intensive Command
           command: |
-            stress --vm 1 --vm-bytes 60G --vm-hang 300
+            # stress --vm 1 --vm-bytes 60G --vm-hang 300
 
       - run:
           name: Execute I/O Stress Test
