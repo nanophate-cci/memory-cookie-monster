@@ -6,13 +6,8 @@ orbs:
 jobs:
   memory_intensive_job:
     machine: true
-    resource_class: large      # Select a resource class with sufficient memory
     steps:
-      - checkout  # Clones your repository
-      
-      - gradle/with-cache:
-          gradle-version: 7.5.0  # Specify your Gradle version
-          cache-key-prefix: gradle
+      - checkout
 
       - run:
           name: Install Dependencies
@@ -27,6 +22,8 @@ jobs:
           command: echo "Memory-intensive test completed successfully."
 
 workflows:
-  test_memory_intensive_job:
+  version: 2
+  memory_test_workflow:
     jobs:
       - memory_intensive_job
+
