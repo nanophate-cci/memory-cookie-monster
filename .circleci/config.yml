@@ -1,29 +1,32 @@
 version: 2.1
 
+orbs:
+  gradle: circleci/gradle@7.3.0
+
 jobs:
   memory_intensive_job:
-    docker:
-      - image: cimg/python:3.9  # Choose a suitable Python Docker image
-    resource_class: large        # Ensure the job uses a large resource class
+    machine: true
+    resource_class: large      # Select a resource class with sufficient memory
     steps:
       - checkout  # Clones your repository
       
+      - gradle/with-cache:
+          gradle-version: 7.5.0  # Specify your Gradle version
+          cache-key-prefix: gradle
+
       - run:
-          name: Install Python Dependencies
-          command: |
-            pip install --upgrade pip
-        
+          name: Install Dependencies
+          command: gradle build -x test
+
       - run:
-          name: Execute Memory-Intensive Python Script
-          command: |
-            python3 memory_alloc.py 200 5  # Adjust the parameters as needed
-        
+          name: Execute Memory-Intensive Task
+          command: gradle allocateMemory -PMEMORY_IN_GB=60 -PHOLD_TIME_MINUTES=5
+
       - run:
           name: Completion Message
           command: echo "Memory-intensive test completed successfully."
 
 workflows:
-  version: 2
-  memory_test_workflow:
+  test_memory_intensive_job:
     jobs:
       - memory_intensive_job
