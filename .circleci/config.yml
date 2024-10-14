@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  gradle: circleci/gradle@3.0.0
-
 jobs:
   memory_intensive_job:
     machine: true
@@ -10,16 +7,32 @@ jobs:
       - checkout
 
       - run:
-          name: Install Dependencies
-          command: gradle build -x test
+          name: Install stress
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y stress
 
       - run:
-          name: Execute Memory-Intensive Task
-          command: gradle allocateMemory -PMEMORY_IN_GB=60 -PHOLD_TIME_MINUTES=5
+          name: Monitor Memory Usage
+          command: |
+            while true; do
+              top
+              sleep 10
+            done &
+            
+      - run:
+          name: Execute Memory-Intensive Command
+          command: |
+            stress --vm 1 --vm-bytes 60G --vm-hang 300
+
+      - run:
+          name: Execute I/O Stress Test
+          command: |
+            stress --io 4 --timeout 300
 
       - run:
           name: Completion Message
-          command: echo "Memory-intensive test completed successfully."
+          command: echo "I/O stress test completed successfully."
 
 workflows:
   version: 2
